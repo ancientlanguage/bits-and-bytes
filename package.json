@@ -1,9 +1,9 @@
 {
-  "name": "react-material-dashboard",
-  "author": "DeviasIO",
-  "email": "contact@devias.io",
+  "name": "bits-and-bytes",
+  "author": "Scott Fleischman",
+  "email": "scott-fleischman@users.noreply.github.com",
   "licence": "MIT",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "private": false,
   "scripts": {
     "start": "react-scripts start",
