@@ -28,13 +28,6 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         alignItems: 'center',
         marginRight: theme.spacing(1)
-    },
-    active: {
-        'color': theme.palette.primary.main,
-        'fontWeight': theme.typography.fontWeightMedium,
-        '& $icon': {
-            color: theme.palette.primary.main
-        }
     }
 }));
 
@@ -48,7 +41,7 @@ const UploadButton = props => {
     const classes = useStyles();
 
     return (
-        <Button activeClassName={classes.active} className={classes.button} to={uploadButton.href}>
+        <Button className={classes.button} to={uploadButton.href}>
             <div className={classes.icon}>{uploadButton.icon}</div>
             {uploadButton.title}
         </Button>
@@ -56,8 +49,7 @@ const UploadButton = props => {
 };
 
 UploadButton.propTypes = {
-    className: PropTypes.string,
-    pages: PropTypes.array.isRequired
+    className: PropTypes.string
 };
 
 export default UploadButton;
