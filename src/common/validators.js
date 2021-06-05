@@ -4,6 +4,4 @@ const checked = (value, options) => {
   }
 };
 
-export default {
-  checked
-};
+export default checked;

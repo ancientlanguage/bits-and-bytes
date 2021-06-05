@@ -187,6 +187,8 @@ function draw() {
   }
 }
 
-export default {
-  draw
+const exportedFunctions = {
+  draw,
 };
+
+export default exportedFunctions;
