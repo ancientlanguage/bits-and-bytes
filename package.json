@@ -2,7 +2,7 @@
   "name": "bits-and-bytes",
   "author": "Scott Fleischman",
   "email": "scott-fleischman@users.noreply.github.com",
-  "licence": "MIT",
+  "license": "MIT",
   "version": "1.0.0",
   "private": false,
   "scripts": {
