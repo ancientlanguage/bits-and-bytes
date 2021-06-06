@@ -1,5 +1,3 @@
-import React from 'react';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Bar } from 'react-chartjs-2';
 import { makeStyles } from '@material-ui/styles';
@@ -20,13 +18,11 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-const LatestSales = props => {
-    const { className, ...rest } = props;
-
+const LatestSales = (props: any) => {
     const classes = useStyles();
 
     return (
-        <Card {...rest} className={clsx(classes.root, className)}>
+        <Card className={classes.root}>
             <CardHeader
                 action={
                     <Button size="small" variant="text">
@@ -38,7 +34,7 @@ const LatestSales = props => {
             <Divider />
             <CardContent>
                 <div className={classes.chartContainer}>
-                    <Bar data={data} options={options} />
+                    <Bar type="bar" data={data} options={options} />
                 </div>
             </CardContent>
             <Divider />

@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-const CardOne = (props: { name: string }) => {
+const CardName = (props: { name: string }) => {
     const classes = useStyles();
     const { name } = props;
 
@@ -56,8 +56,8 @@ const CardOne = (props: { name: string }) => {
     );
 };
 
-CardOne.propTypes = {
+CardName.propTypes = {
     className: PropTypes.string
 };
 
-export default CardOne;
+export default CardName;
