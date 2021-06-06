@@ -1,6 +1,4 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardHeader, CardContent, CardActions, Grid, Divider, Typography, Button } from '@material-ui/core';
 
@@ -13,12 +11,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Notifications = props => {
-    const { className, ...rest } = props;
-
     const classes = useStyles();
 
     return (
-        <Card {...rest} className={clsx(classes.root, className)}>
+        <Card className={classes.root}>
             <form>
                 <CardHeader subheader="Manage notifications" title="Notifications" />
                 <Divider />

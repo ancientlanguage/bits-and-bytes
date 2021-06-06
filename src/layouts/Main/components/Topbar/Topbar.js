@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { AppBar, Toolbar, Hidden, IconButton, Typography } from '@material-ui/core';
@@ -28,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Topbar = props => {
-    const { className, onSelectFile, onSidebarOpen, ...rest } = props;
+    const { onSidebarOpen } = props;
 
     const classes = useStyles();
 
@@ -45,7 +44,7 @@ const Topbar = props => {
     //const [notifications] = useState([]);
 
     return (
-        <AppBar {...rest} className={clsx(classes.root, className)}>
+        <AppBar className={classes.root}>
             <Toolbar>
                 <RouterLink to="/">
                     <img alt="Logo" src="/images/logos/zeros-and-ones.svg" />

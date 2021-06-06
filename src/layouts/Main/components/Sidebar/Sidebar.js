@@ -1,5 +1,4 @@
 import React from 'react';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
@@ -36,7 +35,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Sidebar = props => {
-    const { open, variant, onClose, className, ...rest } = props;
+    const { open, variant, onClose } = props;
 
     const classes = useStyles();
 
@@ -55,7 +54,7 @@ const Sidebar = props => {
 
     return (
         <Drawer anchor="left" classes={{ paper: classes.drawer }} onClose={onClose} open={open} variant={variant}>
-            <div {...rest} className={clsx(classes.root, className)}>
+            <div className={classes.root}>
                 <UploadButton />
 
                 <Divider className={classes.divider} />
