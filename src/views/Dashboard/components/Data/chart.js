@@ -43,34 +43,30 @@ export const options = {
   },
   layout: { padding: 0 },
   scales: {
-    xAxes: [
-      {
-        ticks: {
-          fontColor: palette.text.secondary
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false
-        }
+    x: {
+      ticks: {
+        fontColor: palette.text.secondary
+      },
+      gridLines: {
+        display: false,
+        drawBorder: false
       }
-    ],
-    yAxes: [
-      {
-        ticks: {
-          fontColor: palette.text.secondary,
-          beginAtZero: true,
-          min: 0
-        },
-        gridLines: {
-          borderDash: [2],
-          borderDashOffset: [2],
-          color: palette.divider,
-          drawBorder: false,
-          zeroLineBorderDash: [2],
-          zeroLineBorderDashOffset: [2],
-          zeroLineColor: palette.divider
-        }
+    },
+    y: {
+      ticks: {
+        fontColor: palette.text.secondary,
+        beginAtZero: true,
+        min: 0
+      },
+      gridLines: {
+        borderDash: [2],
+        borderDashOffset: [2],
+        color: palette.divider,
+        drawBorder: false,
+        zeroLineBorderDash: [2],
+        zeroLineBorderDashOffset: [2],
+        zeroLineColor: palette.divider
       }
-    ]
+    }
   }
 };
