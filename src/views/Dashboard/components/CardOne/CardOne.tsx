@@ -1,10 +1,8 @@
-import React from 'react';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { Card, CardContent, Grid, Typography } from '@material-ui/core';
+import { Card, CardContent, Grid, Theme, Typography } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: Theme) => ({
     root: {
         height: '100%'
     },
@@ -16,7 +14,7 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 700
     },
     avatar: {
-        backgroundColor: theme.palette.success.main,
+        backgroundColor: theme.palette.error.main,
         height: 56,
         width: 56
     },
@@ -30,26 +28,25 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center'
     },
     differenceIcon: {
-        color: theme.palette.success.dark
+        color: theme.palette.error.dark
     },
     differenceValue: {
-        color: theme.palette.success.dark,
+        color: theme.palette.error.dark,
         marginRight: theme.spacing(1)
     }
 }));
 
-const CardTwo = props => {
-    const { className, ...rest } = props;
-
+const CardOne = (props: { name: string }) => {
     const classes = useStyles();
+    const { name } = props;
 
     return (
-        <Card {...rest} className={clsx(classes.root, className)}>
+        <Card className={classes.root}>
             <CardContent>
                 <Grid container justify="space-between">
                     <Grid item>
                         <Typography className={classes.title} color="textSecondary" gutterBottom variant="body2">
-                            CARD 2
+                            {name}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -59,8 +56,8 @@ const CardTwo = props => {
     );
 };
 
-CardTwo.propTypes = {
+CardOne.propTypes = {
     className: PropTypes.string
 };
 
-export default CardTwo;
+export default CardOne;
