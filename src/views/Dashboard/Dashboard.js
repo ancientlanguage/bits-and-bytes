@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/styles';
 import { Grid } from '@material-ui/core';
 
-import { CardOne, Data } from './components';
+import { Card, Data } from './components';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -16,16 +16,16 @@ const Dashboard = () => {
         <div className={classes.root}>
             <Grid container spacing={4}>
                 <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <CardOne name="CARD 1" />
+                    <Card name="CARD 1" />
                 </Grid>
                 <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <CardOne name="CARD 2" />
+                    <Card name="CARD 2" />
                 </Grid>
                 <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <CardOne name="CARD 3" />
+                    <Card name="CARD 3" />
                 </Grid>
                 <Grid item lg={3} sm={6} xl={3} xs={12}>
-                    <CardOne name="CARD 4" />
+                    <Card name="CARD 4" />
                 </Grid>
                 <Grid item lg={12} md={18} xl={12} xs={24}>
                     <Data />
