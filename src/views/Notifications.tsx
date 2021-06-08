@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-const Notifications = props => {
+const Notifications = () => {
     const classes = useStyles();
 
     return (
