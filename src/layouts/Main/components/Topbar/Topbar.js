@@ -1,8 +1,8 @@
-import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { AppBar, Toolbar, Hidden, IconButton, Typography } from '@material-ui/core';
+import { white } from 'theme';
 import MenuIcon from '@material-ui/icons/Menu';
 
 const useStyles = makeStyles(theme => ({
@@ -13,13 +13,13 @@ const useStyles = makeStyles(theme => ({
         padding: 10,
         fontSize: 25,
         fontWeight: 900,
-        color: theme.palette.white
+        color: white
     },
     upload: {
         padding: 1,
         fontSize: 25,
         fontWeight: 900,
-        color: theme.palette.white
+        color: white
     },
     flexGrow: {
         flexGrow: 1

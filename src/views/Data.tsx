@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { Bar } from 'react-chartjs-2';
 import { makeStyles } from '@material-ui/styles';
 import { Card, CardHeader, CardContent, CardActions, Divider, Button } from '@material-ui/core';
@@ -18,7 +17,7 @@ const useStyles = makeStyles(() => ({
     }
 }));
 
-const LatestSales = (props: any) => {
+const Data = () => {
     const classes = useStyles();
 
     return (
@@ -47,8 +46,4 @@ const LatestSales = (props: any) => {
     );
 };
 
-LatestSales.propTypes = {
-    className: PropTypes.string
-};
-
-export default LatestSales;
+export default Data;

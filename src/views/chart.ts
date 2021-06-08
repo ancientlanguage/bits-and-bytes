@@ -1,4 +1,6 @@
-import palette from 'theme/palette';
+import theme, { white } from 'theme';
+
+const palette = theme.palette;
 
 export const data = {
   labels: ['1 Aug', '2 Aug', '3 Aug', '4 Aug', '5 Aug', '6 Aug'],
@@ -14,7 +16,7 @@ export const data = {
     },
     {
       label: 'Last year',
-      backgroundColor: palette.neutral,
+      backgroundColor: palette.text.secondary,
       barThickness: 12,
       maxBarThickness: 10,
       barPercentage: 0.5,
@@ -36,7 +38,7 @@ export const options = {
     intersect: false,
     borderWidth: 1,
     borderColor: palette.divider,
-    backgroundColor: palette.white,
+    backgroundColor: white,
     titleFontColor: palette.text.primary,
     bodyFontColor: palette.text.secondary,
     footerFontColor: palette.text.secondary

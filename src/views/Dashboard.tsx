@@ -1,9 +1,9 @@
 import { makeStyles } from '@material-ui/styles';
-import { Grid } from '@material-ui/core';
+import { Grid, Theme } from '@material-ui/core';
+import Card from './Card';
+import Data from './Data';
 
-import { Card, Data } from './components';
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: Theme) => ({
     root: {
         padding: theme.spacing(4)
     }
@@ -27,7 +27,7 @@ const Dashboard = () => {
                 <Grid item lg={3} sm={6} xl={3} xs={12}>
                     <Card name="CARD 4" />
                 </Grid>
-                <Grid item lg={12} md={18} xl={12} xs={24}>
+                <Grid item lg={12} xl={12}>
                     <Data />
                 </Grid>
             </Grid>
