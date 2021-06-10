@@ -1,6 +1,6 @@
 import { Switch, Redirect } from 'react-router-dom';
 
-import { RouteWithLayout } from './components';
+import RouteWithLayout from './RouteWithLayout';
 import { Main as MainLayout, Minimal as MinimalLayout } from './layouts';
 
 import Dashboard from './views/Dashboard';
