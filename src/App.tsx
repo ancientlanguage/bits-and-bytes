@@ -2,6 +2,8 @@ import { useState } from 'react';
 import theme from './theme';
 import { Button, CssBaseline, Typography } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/styles';
+import { Bar } from 'react-chartjs-2';
 
 function sendRequest(setBytes: (bytes: Uint8Array) => void) {
   const request = new XMLHttpRequest();
@@ -34,20 +36,52 @@ const onLoadRequest =
       setBytes(new Uint8Array(arrayBuffer));
     };
 
+const useStyles = makeStyles(() => ({
+  chartContainer: {
+    height: 400,
+    position: 'relative'
+  },
+}));
+
 const Loader = () => {
-  const [getBytes, setBytes] = useState<Uint8Array>(new Uint8Array());
+  const [bytes, setBytes] = useState<Uint8Array>(new Uint8Array());
   const onClick = () => {
     sendRequest(setBytes);
   };
+  const classes = useStyles();
 
+  const labels: string[] = new Array(256);
+  const counts: number[] = new Array(256);
+  for (let index = 0; index < 256; index++) {
+    counts[index] = 0;
+    labels[index] = index.toString();
+  }
+  const byteValues = bytes.values();
+  for (const byte of byteValues) {
+    const existingCount = counts[byte];
+    counts[byte] = existingCount + 1;
+  }
+  
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'Byte count',
+      data: counts,
+    }]
+  };
+  
   return (
     <div>
       <Button variant="contained" color="primary" onClick={onClick}>
         Bits and Bytes
       </Button>
       <Typography variant="body2" color="textSecondary" align="center">
-        {getBytes.length + ' bytes'} 
+        {bytes.length + ' bytes'}
       </Typography>
+
+      <div className={classes.chartContainer}>
+        <Bar type="bar" data={data} />
+      </div>
     </div>
   );
 };
