@@ -6,7 +6,7 @@
     "strictNullChecks": true,
     "module": "esnext",
     "jsx": "react-jsx",
-    "target": "es5",
+    "target": "es6",
     "allowJs": true,
     "lib": [
       "dom",
