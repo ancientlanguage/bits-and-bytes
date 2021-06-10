@@ -5,7 +5,7 @@ export const white: '#FFFFFF' = '#FFFFFF';
 export const black: '#000000' = '#000000';
 const paletteTextPrimary = colors.blueGrey[900];
 const paletteTextSecondary = colors.blueGrey[600];
-const paletteIcon = colors.blueGrey[600];
+export const paletteIcon = colors.blueGrey[600];
 const paletteDivider = colors.grey[200];
 
 const theme = createMuiTheme({

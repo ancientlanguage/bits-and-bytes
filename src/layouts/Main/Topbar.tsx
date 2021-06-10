@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Topbar = props => {
+const Topbar = (props: {onSidebarOpen: () => void}) => {
     const { onSidebarOpen } = props;
 
     const classes = useStyles();

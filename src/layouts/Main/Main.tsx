@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import { Component, useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/styles';
-import { useMediaQuery } from '@material-ui/core';
+import { Theme, useMediaQuery } from '@material-ui/core';
 
-import { Sidebar, Topbar } from './components';
+import Sidebar from './Sidebar';
+import Topbar from './Topbar';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: Theme) => ({
     root: {
         paddingTop: 56,
         height: '100%',
@@ -22,11 +23,11 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Main = props => {
+const Main = (props: {children: Component[]}) => {
     const { children } = props;
 
     const classes = useStyles();
-    const theme = useTheme();
+    const theme: Theme = useTheme();
     const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), {
         defaultMatches: true
     });

@@ -1,12 +1,12 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
-import { Divider, Drawer } from '@material-ui/core';
+import { Drawer, Theme } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { SidebarNav, UploadButton } from './components';
+import SidebarNav from './SidebarNav';
+import { white } from 'theme';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme: Theme) => ({
     drawer: {
         width: 240,
         [theme.breakpoints.up('lg')]: {
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
         }
     },
     root: {
-        backgroundColor: theme.palette.white,
+        backgroundColor: white,
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
@@ -34,12 +34,12 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Sidebar = props => {
+const Sidebar = (props: { open: boolean, variant: 'permanent' | 'persistent' | 'temporary', onClose: (event: object) => void }) => {
     const { open, variant, onClose } = props;
 
     const classes = useStyles();
 
-    const pages = [
+    const pages: { title: string, href: string, icon: any }[] = [
         {
             title: 'Dashboard',
             href: '/dashboard',
@@ -55,9 +55,6 @@ const Sidebar = props => {
     return (
         <Drawer anchor="left" classes={{ paper: classes.drawer }} onClose={onClose} open={open} variant={variant}>
             <div className={classes.root}>
-                <UploadButton />
-
-                <Divider className={classes.divider} />
                 <SidebarNav className={classes.nav} pages={pages} />
             </div>
         </Drawer>
