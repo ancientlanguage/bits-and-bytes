@@ -48,11 +48,13 @@ const useStyles = makeStyles(() => ({
 type Info = { label: string; count: number; };
 type Scale = 'linear' | 'logarithmic';
 type ShowValues = 'all' | 'occurring';
+type BarDirection = 'vertical' | 'horizontal';
 
 const Loader = () => {
   const [bytes, setBytes] = useState<Uint8Array>(new Uint8Array());
   const [scale, setScale] = useState<Scale>('linear');
   const [showValues, setShowValues] = useState<ShowValues>('all');
+  const [barDirection, setBarDirection] = useState<BarDirection>('vertical');
   const onClick = () => {
     sendRequest(setBytes);
   };
@@ -88,18 +90,26 @@ const Loader = () => {
     }]
   };
 
-  const options = {
-    indexAxis: 'y',
+  let options: any = {
     scales: {
       x: {
         display: true,
-        type: scale,
       },
       y: {
         display: true,
       }
     }
   };
+  switch (barDirection) {
+    case 'vertical':
+      options.indexAxis = 'x';
+      options.scales.y.type = scale;
+      break;
+    case 'horizontal':
+      options.indexAxis = 'y';
+      options.scales.x.type = scale;
+      break;
+  }
 
   const handleChangeScale = (event: React.ChangeEvent<{ value: unknown }>) => {
     setScale(event.target.value as Scale);
@@ -107,6 +117,10 @@ const Loader = () => {
 
   const handleChangeShowValues = (event: React.ChangeEvent<{ value: unknown }>) => {
     setShowValues(event.target.value as ShowValues);
+  };
+
+  const handleChangeBarDirection = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setBarDirection(event.target.value as BarDirection);
   };
 
   return (
@@ -121,6 +135,15 @@ const Loader = () => {
       <div className={classes.chartContainer}>
         <FormControl>
           <Container>
+            <Select
+              id="bar-direction"
+              value={barDirection}
+              onChange={handleChangeBarDirection}
+              className={classes.barOptionSelect}
+            >
+              <MenuItem value={'vertical'}>Vertical</MenuItem>
+              <MenuItem value={'horizontal'}>Horizontal</MenuItem>
+            </Select>
             <Select
               id="bar-scale"
               value={scale}
