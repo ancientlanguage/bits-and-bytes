@@ -3,6 +3,7 @@ import theme from './theme';
 import { Button, CssBaseline, Typography } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { Info, ValueCountChart } from './ValueCountChart';
+import { Octokit } from '@octokit/rest';
 
 function sendRequest(setBytes: (bytes: Uint8Array) => void) {
   const request = new XMLHttpRequest();
@@ -37,8 +38,21 @@ const onLoadRequest =
 
 const Loader = () => {
   const [bytes, setBytes] = useState<Uint8Array>(new Uint8Array());
-  const onClick = () => {
+  const onClickBytes = () => {
     sendRequest(setBytes);
+  };
+  const onClickGitHub = () => {
+    const octokit = new Octokit({
+      userAgent: 'Bits and Bytes v1.0',
+    });
+    octokit.rest.repos
+      .listForOrg({
+        org: "AncientLanguage",
+        type: "public",
+      })
+      .then(({ data }) => {
+        data.forEach((item) => console.log(item));
+      });
   };
 
   const infos: Info[] = new Array(256);
@@ -56,8 +70,11 @@ const Loader = () => {
 
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={onClick}>
-        Bits and Bytes
+      <Button variant="contained" color="primary" onClick={onClickBytes}>
+        Load Bytes
+      </Button>
+      <Button variant="contained" color="primary" onClick={onClickGitHub}>
+        GitHub
       </Button>
       <Typography variant="body2" color="textSecondary" align="center">
         {bytes.length + ' bytes'}
