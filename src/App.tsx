@@ -45,13 +45,57 @@ const Loader = () => {
     const octokit = new Octokit({
       userAgent: 'Bits and Bytes v1.0',
     });
-    octokit.rest.repos
-      .listForOrg({
-        org: "AncientLanguage",
-        type: "public",
+    const owner = 'scott-fleischman';
+    const repo = 'ucd';
+    const branch = 'Unicode-13.0';
+    let commitSha = '';
+    let treeSha = '';
+
+    octokit.rest.repos.getBranch({
+      owner,
+      repo,
+      branch
+    })
+      .then(({ data }) => {
+        commitSha = data.commit.sha;
+        console.log({ message: 'getBranch', owner, repo, branch, commitSha })
+        return octokit.rest.repos.getCommit({
+          owner,
+          repo,
+          ref: commitSha
+        });
       })
       .then(({ data }) => {
-        data.forEach((item) => console.log(item));
+        const commitMessage = data.commit.message;
+        treeSha = data.commit.tree.sha;
+        console.log({ message: 'getCommit', commitMessage, owner, repo, branch, commitSha, treeSha })
+        return octokit.rest.git.getTree({
+          owner,
+          repo,
+          tree_sha: treeSha
+        });
+      })
+      .then(({ data }) => {
+        const unicodeData = data.tree.find((item) => item.path === 'UnicodeData.txt');
+        if (!unicodeData || !unicodeData.sha) {
+          throw new Error('Unable to find UnicodeData.txt');
+        }
+        const fileSha = unicodeData.sha;
+        console.log(unicodeData);
+        return octokit.rest.git.getBlob({
+          owner,
+          repo,
+          file_sha: fileSha
+        });
+      })
+      .then(({ data }) => {
+        const base64Content = data.content;
+        const binaryString = atob(base64Content);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < bytes.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        setBytes(bytes);
       });
   };
 
