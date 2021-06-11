@@ -1,22 +1,9 @@
 import { useState } from 'react';
 import theme from './theme';
-import { Button, CssBaseline, Typography } from '@material-ui/core';
+import { Button, Container, CssBaseline, TextField, Typography } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { Info, ValueCountChart } from './ValueCountChart';
 import { Octokit } from '@octokit/rest';
-
-function sendRequest(setBytes: (bytes: Uint8Array) => void) {
-  const request = new XMLHttpRequest();
-  const url = 'https://raw.githubusercontent.com/scott-fleischman/ucd/Unicode-13.0/UnicodeData.txt';
-  const isAsync = true;
-  request.open('GET', url, isAsync);
-  request.responseType = 'arraybuffer';
-  const startTime = performance.now();
-
-  request.onload = onLoadRequest(startTime, setBytes, request);
-
-  request.send(null);
-}
 
 function base64ToUint8Array(base64Content: string): Uint8Array {
   const binaryString = atob(base64Content);
@@ -27,40 +14,86 @@ function base64ToUint8Array(base64Content: string): Uint8Array {
   return bytes;
 }
 
-const onLoadRequest =
-  (startTime: number, setBytes: (bytes: Uint8Array) => void, request: XMLHttpRequest) =>
-    (_: ProgressEvent<EventTarget>) => {
-      const onloadTime = performance.now();
-      const loadTime = onloadTime - startTime;
-      const url = request.responseURL;
-      console.log({ message: 'onload url', url, loadTime });
-
-      const arrayBuffer: ArrayBuffer = request.response;
-      if (!arrayBuffer) {
-        console.log({ error: 'Unable to load url' });
-        return;
-      }
-      console.log({ byteLength: arrayBuffer.byteLength })
-
-      setBytes(new Uint8Array(arrayBuffer));
-    };
-
 const Loader = () => {
   const [bytes, setBytes] = useState<Uint8Array>(new Uint8Array());
-  const onClickBytes = () => {
-    sendRequest(setBytes);
+  const [authToken, setAuthToken] = useState('');
+  const userAgent = 'Bits and Bytes v1.0';
+
+  const handleChangeAuthToken = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setAuthToken(event.target.value as string);
+  };
+
+  const onClickSaveSettings = () => {
+    const octokit = new Octokit({ userAgent, auth: authToken });
+    const owner = 'ancientlanguage';
+    const repo = 'bits-and-bytes-settings';
+    const branch = 'main';
+
+    const updatedAt: string = new Date().toISOString();
+    const settings = { updatedAt };
+    const settingsString = JSON.stringify(settings);
+    const writeCommit = async () => {
+      const { data: branchData } = await octokit.rest.repos.getBranch({ owner, repo, branch });
+      const oldCommitSha = branchData.commit.sha;
+      console.log({ message: 'getBranch result', owner, repo, branch, commitSha: oldCommitSha });
+
+      const { data: commitData } = await octokit.rest.repos.getCommit({ owner, repo, ref: oldCommitSha });
+      const commitMessage = commitData.commit.message;
+      const baseTreeSha = commitData.commit.tree.sha;
+      console.log({ message: 'getCommit result', commitMessage, owner, repo, branch, commitSha: oldCommitSha, baseTreeSha });
+
+      const { data: blobData } = await octokit.rest.git.createBlob({
+        owner,
+        repo,
+        content: settingsString,
+        encoding: 'utf-8'
+      });
+      const blobSha = blobData.sha;
+      console.log({ message: 'createBlob result', owner, repo, blobSha });
+
+      const { data: treeData } = await octokit.rest.git.createTree({
+        owner,
+        repo,
+        tree: [{
+          path: 'settings.json',
+          mode: '100644',
+          type: 'blob',
+          sha: blobSha
+        }],
+        base_tree: baseTreeSha
+      });
+      const treeSha = treeData.sha;
+      console.log({ message: 'createTree result', owner, repo, treeSha });
+
+      const { data: newCommitData } = await octokit.rest.git.createCommit({
+        owner,
+        repo,
+        message: `Update settings at ${updatedAt}`,
+        parents: [oldCommitSha],
+        tree: treeSha
+      });
+      const newCommitSha = newCommitData.sha;
+      console.log({ message: 'createCommit result', owner, repo, newCommitSha });
+
+      await octokit.rest.git.updateRef({
+        owner,
+        repo,
+        ref: `heads/${branch}`,
+        sha: newCommitSha,
+      });
+      console.log({ message: 'updateRef result', owner, repo, branch, newCommitSha });
+    };
+
+    writeCommit();
   };
   const onClickGitHub = () => {
-    const octokit = new Octokit({
-      userAgent: 'Bits and Bytes v1.0',
-    });
+    const octokit = new Octokit({ userAgent, auth: authToken });
     const owner = 'scott-fleischman';
     const repo = 'ucd';
     const branch = 'Unicode-13.0';
     const path = 'UnicodeData.txt';
 
-    type RepoFileBytesInput = { owner: string, repo: string, branch: string, path: string };
-    const getRepoFileBytes = async ({ owner, repo, branch, path }: RepoFileBytesInput) => {
+    const getRepoFileBytes = async () => {
       const { data: branchData } = await octokit.rest.repos.getBranch({ owner, repo, branch });
       const commitSha = branchData.commit.sha;
       console.log({ message: 'getBranch result', owner, repo, branch, commitSha });
@@ -83,9 +116,8 @@ const Loader = () => {
       setBytes(bytes);
     };
 
-    const input = { owner, repo, branch, path };
-    getRepoFileBytes(input)
-      .catch(error => console.error({ message: 'getRepoFileBytes', error, input }));
+    getRepoFileBytes()
+      .catch(error => console.error({ message: 'getRepoFileBytes', error, owner, repo, branch, path }));
   };
 
   const infos: Info[] = new Array(256);
@@ -103,12 +135,22 @@ const Loader = () => {
 
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={onClickBytes}>
-        Load Bytes
-      </Button>
-      <Button variant="contained" color="primary" onClick={onClickGitHub}>
-        GitHub
-      </Button>
+      <Container>
+        <Button variant="contained" color="primary" onClick={onClickSaveSettings}>
+          Save Settings
+        </Button>
+        <Button variant="contained" color="primary" onClick={onClickGitHub}>
+          Load from GitHub
+        </Button>
+        <TextField
+          id="auth-token"
+          label="GitHub Token"
+          type="password"
+          value={authToken}
+          onChange={handleChangeAuthToken}
+          variant="outlined"
+        />
+      </Container>
       <Typography variant="body2" color="textSecondary" align="center">
         {bytes.length + ' bytes'}
       </Typography>
