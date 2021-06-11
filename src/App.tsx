@@ -18,6 +18,15 @@ function sendRequest(setBytes: (bytes: Uint8Array) => void) {
   request.send(null);
 }
 
+function base64ToUint8Array(base64Content: string): Uint8Array {
+  const binaryString = atob(base64Content);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < bytes.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
+
 const onLoadRequest =
   (startTime: number, setBytes: (bytes: Uint8Array) => void, request: XMLHttpRequest) =>
     (_: ProgressEvent<EventTarget>) => {
@@ -48,55 +57,35 @@ const Loader = () => {
     const owner = 'scott-fleischman';
     const repo = 'ucd';
     const branch = 'Unicode-13.0';
-    let commitSha = '';
-    let treeSha = '';
+    const path = 'UnicodeData.txt';
 
-    octokit.rest.repos.getBranch({
-      owner,
-      repo,
-      branch
-    })
-      .then(({ data }) => {
-        commitSha = data.commit.sha;
-        console.log({ message: 'getBranch', owner, repo, branch, commitSha })
-        return octokit.rest.repos.getCommit({
-          owner,
-          repo,
-          ref: commitSha
-        });
-      })
-      .then(({ data }) => {
-        const commitMessage = data.commit.message;
-        treeSha = data.commit.tree.sha;
-        console.log({ message: 'getCommit', commitMessage, owner, repo, branch, commitSha, treeSha })
-        return octokit.rest.git.getTree({
-          owner,
-          repo,
-          tree_sha: treeSha
-        });
-      })
-      .then(({ data }) => {
-        const unicodeData = data.tree.find((item) => item.path === 'UnicodeData.txt');
-        if (!unicodeData || !unicodeData.sha) {
-          throw new Error('Unable to find UnicodeData.txt');
-        }
-        const fileSha = unicodeData.sha;
-        console.log(unicodeData);
-        return octokit.rest.git.getBlob({
-          owner,
-          repo,
-          file_sha: fileSha
-        });
-      })
-      .then(({ data }) => {
-        const base64Content = data.content;
-        const binaryString = atob(base64Content);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < bytes.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        setBytes(bytes);
-      });
+    type RepoFileBytesInput = { owner: string, repo: string, branch: string, path: string };
+    const getRepoFileBytes = async ({ owner, repo, branch, path }: RepoFileBytesInput) => {
+      const { data: branchData } = await octokit.rest.repos.getBranch({ owner, repo, branch });
+      const commitSha = branchData.commit.sha;
+      console.log({ message: 'getBranch result', owner, repo, branch, commitSha });
+
+      const { data: commitData } = await octokit.rest.repos.getCommit({ owner, repo, ref: commitSha });
+      const commitMessage = commitData.commit.message;
+      const treeSha = commitData.commit.tree.sha;
+      console.log({ message: 'getCommit result', commitMessage, owner, repo, branch, commitSha, treeSha });
+
+      const { data: treeData } = await octokit.rest.git.getTree({ owner, repo, tree_sha: treeSha });
+
+      const unicodeData = treeData.tree.find((item) => item.path === path);
+      if (!unicodeData || !unicodeData.sha) {
+        throw new Error(`Unable to find ${path}`);
+      }
+      const fileSha = unicodeData.sha;
+      console.log(unicodeData);
+      const { data: blobData } = await octokit.rest.git.getBlob({ owner, repo, file_sha: fileSha });
+      const bytes = base64ToUint8Array(blobData.content);
+      setBytes(bytes);
+    };
+
+    const input = { owner, repo, branch, path };
+    getRepoFileBytes(input)
+      .catch(error => console.error({ message: 'getRepoFileBytes', error, input }));
   };
 
   const infos: Info[] = new Array(256);
