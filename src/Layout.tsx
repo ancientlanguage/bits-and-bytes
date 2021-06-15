@@ -1,11 +1,13 @@
-import { Container, Typography } from '@material-ui/core';
+import { AppBar, Box, SvgIcon, Toolbar, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import { MouseEvent, useState } from 'react';
 import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import DataSourceList from './DataSourceList';
+import { ReactComponent as LogoIcon } from './logo.svg';
 
 function Structures() {
   return <Typography>Structures</Typography>;
@@ -57,22 +59,30 @@ const Layout = () => {
   };
 
   return (
-    <Container>
-      <Button aria-controls="nav-menu" aria-haspopup="true" onClick={handleClick}>
-        {currentPageName} <ExpandMoreIcon />
-      </Button>
-      <Menu
-        id="nav-menu"
-        anchorEl={anchorElement}
-        keepMounted
-        open={Boolean(anchorElement)}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={() => goToPath('/data-sources')}>Data Sources</MenuItem>
-        <MenuItem onClick={() => goToPath('/structures')}>Structures</MenuItem>
-        <MenuItem onClick={() => goToPath('/mappings')}>Mappings</MenuItem>
-        <MenuItem onClick={() => goToPath('/chains')}>Chains</MenuItem>
-      </Menu>
+    <div>
+      <AppBar position="static">
+        <Toolbar>
+          <SvgIcon component={LogoIcon} viewBox="0 0 60 60" />
+          <Box display="flex" flexGrow={1} ml={1}>
+            <Button color="inherit" aria-controls="nav-menu" aria-haspopup="true" onClick={handleClick}>
+              <Typography>{currentPageName}</Typography> <ExpandMoreIcon />
+            </Button>
+            <Menu
+              id="nav-menu"
+              anchorEl={anchorElement}
+              keepMounted
+              open={Boolean(anchorElement)}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={() => goToPath('/data-sources')}>Data Sources</MenuItem>
+              <MenuItem onClick={() => goToPath('/structures')}>Structures</MenuItem>
+              <MenuItem onClick={() => goToPath('/mappings')}>Mappings</MenuItem>
+              <MenuItem onClick={() => goToPath('/chains')}>Chains</MenuItem>
+            </Menu>
+          </Box>
+          <GitHubIcon />
+        </Toolbar>
+      </AppBar>
 
       <Switch>
         <Route exact path="/">
@@ -94,7 +104,7 @@ const Layout = () => {
           <NotFound />
         </Route>
       </Switch>
-    </Container>
+    </div>
   );
 };
 
