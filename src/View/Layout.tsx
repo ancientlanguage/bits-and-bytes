@@ -1,15 +1,16 @@
-import { AppBar, ButtonBase, Box, SvgIcon, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Box, ButtonBase, Toolbar, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { MouseEvent, useState } from 'react';
-import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
-import Settings from 'View/Settings';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import { AppAction, AppState } from 'State/App';
 import { SettingsAction } from 'State/Settings';
+import Settings from 'View/Settings';
 import DataSourceList from './DataSourceList';
-import { ReactComponent as LogoIcon } from 'Images/logo.svg';
+import Home from './Home';
+import LogoIcon from './LogoIcon';
 
 function Structures() {
   return <Typography>Structures</Typography>;
@@ -33,6 +34,9 @@ const Layout = (props: { appState: AppState; dispatch: React.Dispatch<AppAction>
   let location = useLocation();
   let currentPageName = '';
   switch (location.pathname) {
+    case '/':
+      currentPageName = 'Home';
+      break;
     case '/data-sources':
       currentPageName = 'Data Sources';
       break;
@@ -74,7 +78,7 @@ const Layout = (props: { appState: AppState; dispatch: React.Dispatch<AppAction>
         <Toolbar>
           <Box marginRight={1}>
             <ButtonBase onClick={() => goToPath('/')}>
-              <SvgIcon component={LogoIcon} viewBox="0 0 60 60" />
+              <LogoIcon />
             </ButtonBase>
           </Box>
           <Box display="flex" flexGrow={1}>
@@ -88,6 +92,7 @@ const Layout = (props: { appState: AppState; dispatch: React.Dispatch<AppAction>
               open={Boolean(anchorElement)}
               onClose={handleClose}
             >
+              <MenuItem onClick={() => goToPath('/')}>Home</MenuItem>
               <MenuItem onClick={() => goToPath('/data-sources')}>Data Sources</MenuItem>
               <MenuItem onClick={() => goToPath('/structures')}>Structures</MenuItem>
               <MenuItem onClick={() => goToPath('/mappings')}>Mappings</MenuItem>
@@ -100,7 +105,7 @@ const Layout = (props: { appState: AppState; dispatch: React.Dispatch<AppAction>
 
       <Switch>
         <Route exact path="/">
-          <Redirect to="/settings" />
+          <Home />
         </Route>
         <Route exact path="/data-sources">
           <DataSourceList />
