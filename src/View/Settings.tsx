@@ -1,5 +1,6 @@
 import { Box, Typography } from '@material-ui/core';
-import { SettingsState, SettingsAction, GitHubFileAction } from 'AppState';
+import { GitHubFileAction } from 'State/GitHubFile';
+import { SettingsState, SettingsAction } from 'State/Settings';
 import DataSource from './DataSource';
 
 const Settings = (props: { settings: SettingsState; dispatch: React.Dispatch<SettingsAction>; }) => {

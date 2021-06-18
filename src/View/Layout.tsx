@@ -5,10 +5,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { MouseEvent, useState } from 'react';
 import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
-import Settings from 'Settings';
-import { AppAction, AppState, SettingsAction } from './AppState';
+import Settings from 'View/Settings';
+import { AppAction, AppState } from 'State/App';
+import { SettingsAction } from 'State/Settings';
 import DataSourceList from './DataSourceList';
-import { ReactComponent as LogoIcon } from './logo.svg';
+import { ReactComponent as LogoIcon } from 'Images/logo.svg';
 
 function Structures() {
   return <Typography>Structures</Typography>;

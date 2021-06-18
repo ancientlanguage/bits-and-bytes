@@ -1,5 +1,5 @@
 import { Box, Button, TextField, Typography } from "@material-ui/core";
-import { GitHubFileAction, GitHubFileState } from './AppState';
+import { GitHubFileAction, GitHubFileState } from 'State/GitHubFile';
 import { Octokit } from '@octokit/rest';
 
 const TextStateField = (props: { label: string; value: string | undefined; onChangeValue: (value: string) => void; }) => {
