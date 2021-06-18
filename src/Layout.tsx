@@ -8,6 +8,7 @@ import { MouseEvent, useState } from 'react';
 import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import DataSourceList from './DataSourceList';
 import { ReactComponent as LogoIcon } from './logo.svg';
+import { AppState, AppAction, SettingsAction } from './AppState';
 
 function Structures() {
   return <Typography>Structures</Typography>;
@@ -25,7 +26,7 @@ function NotFound() {
   return <Typography>Not Found</Typography>;
 }
 
-const Layout = () => {
+const Layout = (props: { appState: AppState; dispatch: React.Dispatch<AppAction>; }) => {
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   let history = useHistory();
   let location = useLocation();
@@ -58,6 +59,11 @@ const Layout = () => {
     setAnchorElement(null);
   };
 
+  const settingsDispatch: React.Dispatch<SettingsAction> = (value: SettingsAction) => props.dispatch({
+    tag: 'updateSettings',
+    settingsAction: value
+  });
+
   return (
     <div>
       <AppBar position="static">
@@ -89,7 +95,7 @@ const Layout = () => {
           <Redirect to="/data-sources" />
         </Route>
         <Route exact path="/data-sources">
-          <DataSourceList />
+          <DataSourceList settings={props.appState.settings} dispatch={settingsDispatch} />
         </Route>
         <Route exact path="/structures">
           <Structures />

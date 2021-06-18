@@ -1,30 +1,18 @@
 import { Box, Button, TextField, Typography } from "@material-ui/core";
-import { useState } from "react";
-import { GitHubFile, GitHubFileResult } from './Settings';
+import { GitHubFileAction, GitHubFileState } from './AppState';
 import { Octokit } from '@octokit/rest';
 
-function makeInitialTextState(label: string, input: string | undefined): TextState {
-  const value = input || '';
-  return {
-    label,
-    value,
-    isError: false
-  };
-};
-
-const TextStateField = (props: { textState: TextState; onChangeValue: (value: string) => void; }) => {
-  const { textState, onChangeValue } = props;
+const TextStateField = (props: { label: string; value: string | undefined; onChangeValue: (value: string) => void; }) => {
+  const { label, value, onChangeValue } = props;
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChangeValue(event.target.value);
   };
   return (
     <TextField
-      error={textState.isError}
-      label={textState.label}
-      value={textState.value}
+      label={label}
+      value={value || ''}
       onChange={handleChange}
-      helperText={textState.errorMessage}
-      variant="filled"
+      variant="outlined"
     />
   );
 };
@@ -34,108 +22,74 @@ const fetchShas = async (octokit: Octokit,
   repo: string,
   branch: string,
   path: string,
-  updateResult: (result: GitHubFileResult) => void
+  dispatch: React.Dispatch<GitHubFileAction>
 ) => {
-  let result: GitHubFileResult = {};
   const getBranchResult = await octokit.rest.repos.getBranch({ owner, repo, branch })
     .catch((error) => {
-      result.fetchError = error.toString();
-      result.getBranchError = true;
-      updateResult(result);
+      dispatch({ tag: 'setFetchError', fetchError: error.toString() });
+      dispatch({ tag: 'setGetBranchError', getBranchError: true });
     });
   if (!getBranchResult) {
-    result.getBranchError = true;
-    updateResult(result);
+    dispatch({ tag: 'setGetBranchError', getBranchError: true });
     return;
   }
   const commitSha = getBranchResult.data.commit.sha;
-  result.commitSha = commitSha;
-  updateResult(result);
+  dispatch({ tag: 'setCommitSha', commitSha });
 
   const getCommitResult = await octokit.rest.repos.getCommit({ owner, repo, ref: commitSha })
     .catch((error) => {
-      result.fetchError = error.toString();
-      result.getCommitError = true;
-      updateResult(result);
+      dispatch({ tag: 'setFetchError', fetchError: error.toString() });
+      dispatch({ tag: 'setGetCommitError', getCommitError: true });
     });
   if (!getCommitResult) {
-    result.getCommitError = true;
+    dispatch({ tag: 'setGetCommitError', getCommitError: true });
     return;
   }
-  result.commitMessage = getCommitResult.data.commit.message;
+  dispatch({ tag: 'setCommitMessage', commitMessage: getCommitResult.data.commit.message });
   const treeSha = getCommitResult.data.commit.tree.sha;
-  result.treeSha = treeSha;
-  updateResult(result);
+  dispatch({ tag: 'setTreeSha', treeSha });
 
   const getTreeResult = await octokit.rest.git.getTree({ owner, repo, tree_sha: treeSha })
     .catch((error) => {
-      result.fetchError = error.toString();
-      result.getTreeError = true;
-      updateResult(result);
+      dispatch({ tag: 'setFetchError', fetchError: error.toString() });
+      dispatch({ tag: 'setGetTreeError', getTreeError: true });
     });
   if (!getTreeResult) {
-    result.getTreeError = true;
-    updateResult(result);
+    dispatch({ tag: 'setGetTreeError', getTreeError: true });
     return;
   }
 
   const fileData = getTreeResult.data.tree.find((item) => item.path === path);
   if (!fileData) {
-    result.findFileError = true;
-    updateResult(result);
+    dispatch({ tag: 'setFindFileError', findFileError: true });
     return;
   }
-  result.fileSha = fileData.sha;
-  result.fileSize = fileData.size;
-  updateResult(result);
+  dispatch({ tag: 'setFileSha', fileSha: fileData.sha });
+  dispatch({ tag: 'setFileSize', fileSize: fileData.size });
 };
 
-type TextState = {
-  label: string;
-  value: string;
-  isError: boolean;
-  errorMessage?: string;
-};
-
-const DataSource = (props: { dataSource: GitHubFile }) => {
+const DataSource = (props: { dataSource: GitHubFileState; dispatch: React.Dispatch<GitHubFileAction>; }) => {
   const octokit = new Octokit({userAgent: 'Bits and Bytes v1.0'});
-  const { dataSource } = props;
-  const [owner, setOwner] = useState(makeInitialTextState('Owner', dataSource.owner));
-  const [repo, setRepo] = useState(makeInitialTextState('Repo', dataSource.repo));
-  const [path, setPath] = useState(makeInitialTextState('Path', dataSource.path));
-  const [branch, setBranch] = useState(makeInitialTextState('Branch', dataSource.branch));
-  const [commitSha, setCommitSha] = useState(dataSource.commitSha || '');
-  const [commitMessage, setCommitMessage] = useState<string | undefined>(undefined);
-  const [treeSha, setTreeSha] = useState(dataSource.treeSha || '');
-  const [fileSha, setFileSha] = useState(dataSource.fileSha || '');
-  const [fileSize, setFileSize] = useState<number | undefined>(undefined);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+  const { dataSource, dispatch } = props;
+  const { owner, repo, branch, path, commitSha, treeSha, fileSha } = dataSource.save;
+  const { commitMessage, fileSize } = dataSource.extra;
 
-  const updateGitHubFileResult = (result: GitHubFileResult) => {
-    setCommitSha(result.commitSha || '');
-    setCommitMessage(result.commitMessage || '');
-    setTreeSha(result.treeSha || '');
-    setFileSha(result.fileSha || '');
-    setFileSize(result.fileSize);
-    
-    if (result.fetchError) {
-      setErrorMessage(`Fetch error: ${result.fetchError}`);
-    } else if (result.getBranchError) {
-      setErrorMessage('Branch not found');
-    } else if (result.getCommitError) {
-      setErrorMessage('Commit not found');
-    } else if (result.getTreeError) {
-      setErrorMessage('Tree not found');
-    } else {
-      setErrorMessage(undefined);
-    }
-
+  let errorMessage = undefined;
+  if (dataSource.extra.fetchError) {
+    errorMessage = `Fetch error: ${dataSource.extra.fetchError}`;
+  } else if (dataSource.extra.getBranchError) {
+    errorMessage = 'Branch not found';
+  } else if (dataSource.extra.getCommitError) {
+    errorMessage = 'Commit not found';
+  } else if (dataSource.extra.getTreeError) {
+    errorMessage = 'Tree not found';
   }
+
   const onClickLoad = () => {
-    if (!owner.value || !repo.value || !branch.value || !path.value) {
+    if (!owner || !repo || !branch || !path) {
       return;
     }
-    fetchShas(octokit, owner.value, repo.value, branch.value, path.value, updateGitHubFileResult)
+    fetchShas(octokit, owner, repo, branch, path, dispatch)
       .catch(error => console.error(error));
   };
   return (
@@ -143,16 +97,16 @@ const DataSource = (props: { dataSource: GitHubFile }) => {
       <form>
         <Box display="flex">
           <Box pr={1}>
-            <TextStateField textState={owner} onChangeValue={(value) => setOwner({ ...owner, value })} />
+            <TextStateField label="Owner" value={owner} onChangeValue={(value) => dispatch({ tag:'setOwner', owner: value })} />
           </Box>
           <Box pr={1}>
-            <TextStateField textState={repo} onChangeValue={(value) => setRepo({ ...repo, value })} />
+            <TextStateField label="Repo" value={repo} onChangeValue={(value) => dispatch({ tag:'setRepo', repo: value })} />
           </Box>
           <Box pr={1}>
-            <TextStateField textState={branch} onChangeValue={(value) => setBranch({ ...repo, value })} />
+            <TextStateField label="Branch" value={branch} onChangeValue={(value) => dispatch({ tag: 'setBranch', branch: value })} />
           </Box>
           <Box pr={1}>
-            <TextStateField textState={path} onChangeValue={(value) => setPath({ ...path, value })} />
+            <TextStateField label="Path" value={path} onChangeValue={(value) => dispatch({ tag: 'setPath', path: value })} />
           </Box>
           <Button variant="contained" color="primary" onClick={onClickLoad}>
             Load
