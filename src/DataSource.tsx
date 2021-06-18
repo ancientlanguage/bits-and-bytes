@@ -96,16 +96,16 @@ const DataSource = (props: { dataSource: GitHubFileState; dispatch: React.Dispat
     <div>
       <form>
         <Box display="flex">
-          <Box pr={1}>
+          <Box paddingRight={1}>
             <TextStateField label="Owner" value={owner} onChangeValue={(value) => dispatch({ tag:'setOwner', owner: value })} />
           </Box>
-          <Box pr={1}>
+          <Box paddingRight={1}>
             <TextStateField label="Repo" value={repo} onChangeValue={(value) => dispatch({ tag:'setRepo', repo: value })} />
           </Box>
-          <Box pr={1}>
+          <Box paddingRight={1}>
             <TextStateField label="Branch" value={branch} onChangeValue={(value) => dispatch({ tag: 'setBranch', branch: value })} />
           </Box>
-          <Box pr={1}>
+          <Box paddingRight={1}>
             <TextStateField label="Path" value={path} onChangeValue={(value) => dispatch({ tag: 'setPath', path: value })} />
           </Box>
           <Button variant="contained" color="primary" onClick={onClickLoad}>
@@ -113,7 +113,7 @@ const DataSource = (props: { dataSource: GitHubFileState; dispatch: React.Dispat
           </Button>
         </Box>
       </form>
-      <Box display="flex" flexDirection="column">
+      <Box display="flex" flexDirection="column" marginTop={2}>
         {errorMessage ? <Box pr={1}><Typography variant="caption">Error: {errorMessage}</Typography></Box> : null}
         {commitSha ? <Box pr={1}><Typography variant="caption">Commit: {commitSha}</Typography></Box> : null}
         {commitMessage ? <Box pr={1}><Typography variant="caption">{commitMessage}</Typography></Box> : null}

@@ -3,12 +3,12 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import GitHubIcon from '@material-ui/icons/GitHub';
 import { MouseEvent, useState } from 'react';
 import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
+import Settings from 'Settings';
+import { AppAction, AppState, SettingsAction } from './AppState';
 import DataSourceList from './DataSourceList';
 import { ReactComponent as LogoIcon } from './logo.svg';
-import { AppState, AppAction, SettingsAction } from './AppState';
 
 function Structures() {
   return <Typography>Structures</Typography>;
@@ -44,6 +44,9 @@ const Layout = (props: { appState: AppState; dispatch: React.Dispatch<AppAction>
     case '/chains':
       currentPageName = 'Chains';
       break;
+    case '/settings':
+      currentPageName = 'Settings';
+      break;
   }
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
@@ -68,8 +71,10 @@ const Layout = (props: { appState: AppState; dispatch: React.Dispatch<AppAction>
     <div>
       <AppBar position="static">
         <Toolbar>
-          <SvgIcon component={LogoIcon} viewBox="0 0 60 60" />
-          <Box display="flex" flexGrow={1} ml={1}>
+          <Box marginRight={1}>
+            <SvgIcon component={LogoIcon} viewBox="0 0 60 60" />
+          </Box>
+          <Box display="flex" flexGrow={1}>
             <Button color="inherit" aria-controls="nav-menu" aria-haspopup="true" onClick={handleClick}>
               <Typography>{currentPageName}</Typography> <ExpandMoreIcon />
             </Button>
@@ -84,18 +89,18 @@ const Layout = (props: { appState: AppState; dispatch: React.Dispatch<AppAction>
               <MenuItem onClick={() => goToPath('/structures')}>Structures</MenuItem>
               <MenuItem onClick={() => goToPath('/mappings')}>Mappings</MenuItem>
               <MenuItem onClick={() => goToPath('/chains')}>Chains</MenuItem>
+              <MenuItem onClick={() => goToPath('/settings')}>Settings</MenuItem>
             </Menu>
           </Box>
-          <GitHubIcon />
         </Toolbar>
       </AppBar>
 
       <Switch>
         <Route exact path="/">
-          <Redirect to="/data-sources" />
+          <Redirect to="/settings" />
         </Route>
         <Route exact path="/data-sources">
-          <DataSourceList settings={props.appState.settings} dispatch={settingsDispatch} />
+          <DataSourceList />
         </Route>
         <Route exact path="/structures">
           <Structures />
@@ -105,6 +110,9 @@ const Layout = (props: { appState: AppState; dispatch: React.Dispatch<AppAction>
         </Route>
         <Route exact path="/chains">
           <Chains />
+        </Route>
+        <Route exact path="/settings">
+          <Settings settings={props.appState.settings} dispatch={settingsDispatch} />
         </Route>
         <Route>
           <NotFound />
