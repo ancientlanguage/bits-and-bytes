@@ -1,4 +1,4 @@
-import { AppBar, Box, SvgIcon, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, ButtonBase, Box, SvgIcon, Toolbar, Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -72,7 +72,9 @@ const Layout = (props: { appState: AppState; dispatch: React.Dispatch<AppAction>
       <AppBar position="static">
         <Toolbar>
           <Box marginRight={1}>
-            <SvgIcon component={LogoIcon} viewBox="0 0 60 60" />
+            <ButtonBase onClick={() => goToPath('/')}>
+              <SvgIcon component={LogoIcon} viewBox="0 0 60 60" />
+            </ButtonBase>
           </Box>
           <Box display="flex" flexGrow={1}>
             <Button color="inherit" aria-controls="nav-menu" aria-haspopup="true" onClick={handleClick}>
