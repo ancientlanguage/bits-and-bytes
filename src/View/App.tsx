@@ -11,7 +11,7 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <BrowserRouter>
+      <BrowserRouter basename="/bits-and-bytes">
         <Layout appState={appState} dispatch={dispatch} />
       </BrowserRouter>
     </ThemeProvider>
