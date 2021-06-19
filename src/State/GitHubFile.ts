@@ -45,6 +45,10 @@ export type GitHubFileAction = {
 } | {
   tag: 'setFileSize';
   fileSize?: number;
+} | {
+  tag: 'startLoading';
+} | {
+  tag: 'stopLoading';
 };
 
 export type GitHubFileSave = {
@@ -65,6 +69,7 @@ export type GitHubFileExtra = {
   getTreeError?: boolean;
   findFileError?: boolean;
   fileSize?: number;
+  loading: boolean;
 };
 
 export const gitHubFileReducer = (state: GitHubFileState, action: GitHubFileAction) => {
@@ -130,7 +135,8 @@ export const gitHubFileReducer = (state: GitHubFileState, action: GitHubFileActi
         ...state,
         extra: {
           ...state.extra,
-          fetchError: action.fetchError
+          fetchError: action.fetchError,
+          loading: false
         }
       };
     case 'setGetBranchError':
@@ -138,7 +144,8 @@ export const gitHubFileReducer = (state: GitHubFileState, action: GitHubFileActi
         ...state,
         extra: {
           ...state.extra,
-          getBranchError: action.getBranchError
+          getBranchError: action.getBranchError,
+          loading: false
         }
       };
     case 'setCommitMessage':
@@ -154,7 +161,8 @@ export const gitHubFileReducer = (state: GitHubFileState, action: GitHubFileActi
         ...state,
         extra: {
           ...state.extra,
-          getCommitError: action.getCommitError
+          getCommitError: action.getCommitError,
+          loading: false
         }
       };
     case 'setGetTreeError':
@@ -162,7 +170,8 @@ export const gitHubFileReducer = (state: GitHubFileState, action: GitHubFileActi
         ...state,
         extra: {
           ...state.extra,
-          getTreeError: action.getTreeError
+          getTreeError: action.getTreeError,
+          loading: false
         }
       };
     case 'setFindFileError':
@@ -170,7 +179,8 @@ export const gitHubFileReducer = (state: GitHubFileState, action: GitHubFileActi
         ...state,
         extra: {
           ...state.extra,
-          findFileError: action.findFileError
+          findFileError: action.findFileError,
+          loading: false
         }
       };
     case 'setFileSize':
@@ -181,5 +191,46 @@ export const gitHubFileReducer = (state: GitHubFileState, action: GitHubFileActi
           fileSize: action.fileSize
         }
       };
+    case 'startLoading':
+      return {
+        ...state,
+        save: {
+          ...state.save,
+          commitSha: undefined,
+          treeSha: undefined,
+          fileSha: undefined
+        },
+        extra: {
+          ...state.extra,
+          loading: true,
+          fetchError: undefined,
+          getBranchError: undefined,
+          commitMessage: undefined,
+          getCommitError: undefined,
+          getTreeError: undefined,
+          findFileError: undefined,
+          fileSize: undefined
+        },
+      };
+    case 'stopLoading':
+      return {
+        ...state,
+        extra: {
+          ...state.extra,
+          loading: false
+        }
+      };
   }
 }
+
+export const gitHubFileErrorMessage = (file: GitHubFileState) => {
+  if (file.extra.fetchError) {
+    return `Fetch error: ${file.extra.fetchError}`;
+  } else if (file.extra.getBranchError) {
+    return 'Branch not found';
+  } else if (file.extra.getCommitError) {
+    return 'Commit not found';
+  } else if (file.extra.getTreeError) {
+    return 'Tree not found';
+  }
+};

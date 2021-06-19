@@ -1,6 +1,8 @@
-import { Box, Button, TextField, Typography } from "@material-ui/core";
-import { GitHubFileAction, GitHubFileState } from 'State/GitHubFile';
+import { Box, Button, CircularProgress, Popover, TextField, Typography } from "@material-ui/core";
 import { Octokit } from '@octokit/rest';
+import { useState } from "react";
+import { GitHubFileAction, gitHubFileErrorMessage, GitHubFileState } from 'State/GitHubFile';
+import InfoIcon from '@material-ui/icons/Info';
 
 const TextStateField = (props: { label: string; value: string | undefined; onChangeValue: (value: string) => void; }) => {
   const { label, value, onChangeValue } = props;
@@ -24,6 +26,7 @@ const fetchShas = async (octokit: Octokit,
   path: string,
   dispatch: React.Dispatch<GitHubFileAction>
 ) => {
+  dispatch({ tag: 'startLoading' });
   const getBranchResult = await octokit.rest.repos.getBranch({ owner, repo, branch })
     .catch((error) => {
       dispatch({ tag: 'setFetchError', fetchError: error.toString() });
@@ -66,6 +69,7 @@ const fetchShas = async (octokit: Octokit,
   }
   dispatch({ tag: 'setFileSha', fileSha: fileData.sha });
   dispatch({ tag: 'setFileSize', fileSize: fileData.size });
+  dispatch({ tag: 'stopLoading' });
 };
 
 const DataSource = (props:
@@ -76,26 +80,46 @@ const DataSource = (props:
   }) => {
   const { dataSource, dispatch, octokit } = props;
   const { owner, repo, branch, path, commitSha, treeSha, fileSha } = dataSource.save;
-  const { commitMessage, fileSize } = dataSource.extra;
+  const { commitMessage, fileSize, loading } = dataSource.extra;
+  const [infoAnchorElement, setInfoAnchorElement] = useState<HTMLButtonElement | null>(null);
 
-  let errorMessage = undefined;
-  if (dataSource.extra.fetchError) {
-    errorMessage = `Fetch error: ${dataSource.extra.fetchError}`;
-  } else if (dataSource.extra.getBranchError) {
-    errorMessage = 'Branch not found';
-  } else if (dataSource.extra.getCommitError) {
-    errorMessage = 'Commit not found';
-  } else if (dataSource.extra.getTreeError) {
-    errorMessage = 'Tree not found';
-  }
+  const infoOpen = Boolean(infoAnchorElement);
+  const infoId = infoOpen ? 'data-source-info' : undefined;
+  const errorMessage = gitHubFileErrorMessage(dataSource);
+  const hasError = Boolean(errorMessage);
+  const hasAnyInfo =
+    Boolean(errorMessage) ||
+    Boolean(commitSha) ||
+    Boolean(commitMessage) ||
+    Boolean(treeSha) ||
+    Boolean(fileSha) ||
+    Boolean(fileSize);
+  const hasFullInfo = Boolean(fileSize);
+  const infoColor =
+    loading ? 'disabled'
+      : hasError ? 'error'
+        : hasFullInfo ? 'primary'
+          : 'inherit';
+
+  const handleClickInfo = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setInfoAnchorElement(event.currentTarget);
+  };
+
+  const handleCloseInfo = () => {
+    setInfoAnchorElement(null);
+  };
 
   const onClickLoad = () => {
-    if (!owner || !repo || !branch || !path) {
+    if (!owner || !repo || !branch || !path || loading) {
       return;
     }
     fetchShas(octokit, owner, repo, branch, path, dispatch)
       .catch(error => console.error(error));
   };
+  const loadingIndicator =
+    loading ?
+      (<CircularProgress />)
+      : null;
   return (
     <div>
       <form>
@@ -112,19 +136,42 @@ const DataSource = (props:
           <Box paddingRight={1}>
             <TextStateField label="Path" value={path} onChangeValue={(value) => dispatch({ tag: 'setPath', path: value })} />
           </Box>
-          <Button variant="contained" color="primary" onClick={onClickLoad}>
-            Load
-          </Button>
+          <Box paddingRight={1}>
+            <Button variant="contained" color="primary" onClick={onClickLoad} disabled={loading}>
+              Load
+            </Button>
+          </Box>
+          <div>
+            <Button aria-describedby={infoId} onClick={handleClickInfo} disabled={!hasAnyInfo}>
+              <InfoIcon color={infoColor} />
+            </Button>
+            <Popover
+              id={infoId}
+              open={infoOpen}
+              anchorEl={infoAnchorElement}
+              onClose={handleCloseInfo}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+            >
+              <Box display="flex" flexDirection="column" margin={1}>
+                {errorMessage ? <Box pr={1}><Typography variant="caption">Error: {errorMessage}</Typography></Box> : null}
+                {commitSha ? <Box pr={1}><Typography variant="caption">Commit: {commitSha}</Typography></Box> : null}
+                {commitMessage ? <Box pr={1}><Typography variant="caption">Commit Message: {commitMessage}</Typography></Box> : null}
+                {treeSha ? <Box pr={1}><Typography variant="caption">Tree: {treeSha}</Typography></Box> : null}
+                {fileSha ? <Box pr={1}><Typography variant="caption">Blob: {fileSha}</Typography></Box> : null}
+                {fileSize ? <Box pr={1}><Typography variant="caption">Size: {fileSize} bytes</Typography></Box> : null}
+              </Box>
+            </Popover>
+          </div>
+          {loadingIndicator}
         </Box>
       </form>
-      <Box display="flex" flexDirection="column" marginTop={2}>
-        {errorMessage ? <Box pr={1}><Typography variant="caption">Error: {errorMessage}</Typography></Box> : null}
-        {commitSha ? <Box pr={1}><Typography variant="caption">Commit: {commitSha}</Typography></Box> : null}
-        {commitMessage ? <Box pr={1}><Typography variant="caption">{commitMessage}</Typography></Box> : null}
-        {treeSha ? <Box pr={1}><Typography variant="caption">Tree: {treeSha}</Typography></Box> : null}
-        {fileSha ? <Box pr={1}><Typography variant="caption">Blob: {fileSha}</Typography></Box> : null}
-        {fileSize ? <Box pr={1}><Typography variant="caption">Size: {fileSize} bytes</Typography></Box> : null}
-      </Box>
     </div>
   );
 };

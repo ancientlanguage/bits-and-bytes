@@ -13,7 +13,9 @@ export const initialSettingsFile: GitHubFileState = {
     branch: 'main',
     path: 'settings.json'
   },
-  extra: {}
+  extra: {
+    loading: false
+  }
 };
 
 export const initialOctokitDeps: OctokitDeps = {
