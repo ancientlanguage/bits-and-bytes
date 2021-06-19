@@ -1,22 +1,30 @@
 import { GitHubFileState } from "./GitHubFile";
-import { SettingsAction, SettingsState, settingsStateReducer } from "./Settings";
+import { makeOctokit, OctokitDeps, SettingsAction, SettingsState, settingsStateReducer } from "./Settings";
 
 export type AppState = {
   settings: SettingsState;
   dataSources: GitHubFileState[];
 };
 
+export const initialSettingsFile: GitHubFileState = {
+  save: {
+    owner: 'ancientlanguage',
+    repo: 'bits-and-bytes-settings',
+    branch: 'main',
+    path: 'settings.json'
+  },
+  extra: {}
+};
+
+export const initialOctokitDeps: OctokitDeps = {
+  userAgent: 'Bits and Bytes v1.0'
+};
+
 export const initialAppState: AppState = {
   settings: {
-    file: {
-      save: {
-        owner: 'ancientlanguage',
-        repo: 'bits-and-bytes-settings',
-        branch: 'main',
-        path: 'settings.json'
-      },
-      extra: {}
-    }
+    file: initialSettingsFile,
+    octokitDeps: initialOctokitDeps,
+    octokit: makeOctokit(initialOctokitDeps)
   },
   dataSources: []
 };

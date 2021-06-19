@@ -13,7 +13,11 @@ const Settings = (props: { settings: SettingsState; dispatch: React.Dispatch<Set
       <Box marginBottom={2}>
         <Typography variant="h6">Source File</Typography>
       </Box>
-      <DataSource dataSource={props.settings.file} dispatch={dispatchFileAction}></DataSource>
+      <DataSource
+        dataSource={props.settings.file}
+        dispatch={dispatchFileAction}
+        octokit={props.settings.octokit}
+      />
     </Box>
   );
 };

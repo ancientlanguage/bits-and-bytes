@@ -68,9 +68,13 @@ const fetchShas = async (octokit: Octokit,
   dispatch({ tag: 'setFileSize', fileSize: fileData.size });
 };
 
-const DataSource = (props: { dataSource: GitHubFileState; dispatch: React.Dispatch<GitHubFileAction>; }) => {
-  const octokit = new Octokit({userAgent: 'Bits and Bytes v1.0'});
-  const { dataSource, dispatch } = props;
+const DataSource = (props:
+  {
+    dataSource: GitHubFileState;
+    dispatch: React.Dispatch<GitHubFileAction>;
+    octokit: Octokit;
+  }) => {
+  const { dataSource, dispatch, octokit } = props;
   const { owner, repo, branch, path, commitSha, treeSha, fileSha } = dataSource.save;
   const { commitMessage, fileSize } = dataSource.extra;
 
@@ -97,10 +101,10 @@ const DataSource = (props: { dataSource: GitHubFileState; dispatch: React.Dispat
       <form>
         <Box display="flex">
           <Box paddingRight={1}>
-            <TextStateField label="Owner" value={owner} onChangeValue={(value) => dispatch({ tag:'setOwner', owner: value })} />
+            <TextStateField label="Owner" value={owner} onChangeValue={(value) => dispatch({ tag: 'setOwner', owner: value })} />
           </Box>
           <Box paddingRight={1}>
-            <TextStateField label="Repo" value={repo} onChangeValue={(value) => dispatch({ tag:'setRepo', repo: value })} />
+            <TextStateField label="Repo" value={repo} onChangeValue={(value) => dispatch({ tag: 'setRepo', repo: value })} />
           </Box>
           <Box paddingRight={1}>
             <TextStateField label="Branch" value={branch} onChangeValue={(value) => dispatch({ tag: 'setBranch', branch: value })} />
