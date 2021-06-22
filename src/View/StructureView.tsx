@@ -1,65 +1,63 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select } from "@material-ui/core";
-import AddIcon from '@material-ui/icons/Add';
-import { useState } from 'react';
-import { Structure, StructureTag } from "State/Structure";
-import * as UUID from 'uuid';
+import { makeStyles } from '@material-ui/core/styles';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import TreeItem from '@material-ui/lab/TreeItem';
+import TreeView from '@material-ui/lab/TreeView';
 
-const StructureKindSelect = (props: { tag: StructureTag; setTag: (tag: StructureTag) => void; }) => {
-  const [labelId] = useState<string>(() => UUID.v4());
-  const [selectId] = useState<string>(() => UUID.v4());
-  const { tag, setTag } = props;
-  return (
-    <FormControl>
-      <InputLabel shrink id={labelId}>
-        Structure
-      </InputLabel>
-      <Select
-        labelId={labelId}
-        id={selectId}
-        value={tag}
-        onChange={(event) => setTag(event.target.value as StructureTag)}
-      >
-        <MenuItem value="atom">Atom</MenuItem>
-        <MenuItem value="or">Or</MenuItem>
-        <MenuItem value="and">And</MenuItem>
-      </Select>
-    </FormControl>
-  );
+interface RenderTree {
+  id: string;
+  name: string;
+  children?: RenderTree[];
 }
 
-const SubStructures = (props: { direction: 'vertical' | 'horizontal'; structures: string[] }) => {
-  return (
-    <Box margin={1}>
-      <Button>
-        <AddIcon />
-      </Button>
-    </Box>
-  );
+const data: RenderTree = {
+  id: 'root',
+  name: 'Parent',
+  children: [
+    {
+      id: '1',
+      name: 'Child - 1',
+    },
+    {
+      id: '3',
+      name: 'Child - 3',
+      children: [
+        {
+          id: '4',
+          name: 'Child - 4',
+        },
+      ],
+    },
+  ],
 };
 
-type StructureInterface = {
-  getStructure: (structureId: string) => Structure | undefined;
-  upsertStructure: (structureId: string, structure: Structure) => void;
-};
+const useStyles = makeStyles({
+  root: {
+    height: 110,
+    flexGrow: 1,
+    maxWidth: 400,
+  },
+});
 
 const StructureView = () => {
-  // const [structure, setStructure] = useState<Structure>(() => newDefaultStructure(100));
-  const [structureTag, setStructureTag] = useState<StructureTag>('atom');
-  let childComponent;
-  switch (structureTag) {
-    case 'or':
-      childComponent = (<SubStructures direction="horizontal" structures={[]} />);
-      break;
-    case 'and':
-      childComponent = (<SubStructures direction="vertical" structures={[]} />);
-      break;
-  }
-  return (
-    <Box border={1} margin={1} padding={1}>
-      <StructureKindSelect tag={structureTag} setTag={setStructureTag} />
-      {childComponent}
-    </Box>
+  const classes = useStyles();
+
+  const renderTree = (nodes: RenderTree) => (
+    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
+      {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
+    </TreeItem>
   );
-};
+
+  return (
+    <TreeView
+      className={classes.root}
+      defaultCollapseIcon={<ExpandMoreIcon />}
+      defaultExpanded={['root']}
+      defaultExpandIcon={<ChevronRightIcon />}
+    >
+      {renderTree(data)}
+    </TreeView>
+  );
+}
 
 export default StructureView;
