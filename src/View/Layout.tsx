@@ -10,11 +10,11 @@ import { SettingsAction } from 'State/Settings';
 import Settings from 'View/Settings';
 import DataSourceList from './DataSourceList';
 import Home from './Home';
-import Loader from './Loader';
 import LogoIcon from './LogoIcon';
+import StructureView from './StructureView';
 
 function Structures() {
-  return <Loader />;
+  return <StructureView />;
 }
 
 function Mappings() {
