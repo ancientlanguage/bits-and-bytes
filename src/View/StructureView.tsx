@@ -12,19 +12,85 @@ interface RenderTree {
 
 const data: RenderTree = {
   id: 'root',
-  name: 'Parent',
+  name: 'Cases',
   children: [
     {
       id: '1',
-      name: 'Child - 1',
+      name: 'Word',
+      children: [
+        {
+          id: '4',
+          name: 'Array [1-30] Letter',
+          children: [
+            {
+              id: '10',
+              name: 'Letter',
+              children: [
+                {
+                  id: '11',
+                  name: 'AND',
+                  children: [
+                    {
+                      id: 'Greek Letter',
+                      name: 'Greek Letter'
+                    },
+                    {
+                      id: 'Diacritics',
+                      name: 'Diacritics, OR:',
+                      children: [
+                        {
+                          id: 'No diacritic',
+                          name: 'No diacritic',
+                        },
+                        {
+                          id: 'Smooth breathing',
+                          name: 'Smooth breathing',
+                        },
+                        {
+                          id: 'Rough breathing',
+                          name: 'Rough breathing',
+                        }
+                      ]
+                    },
+                  ]
+                }
+              ]
+            },
+            {
+              id: '4',
+              name: 'Child - 8',
+            },
+            {
+              id: '4',
+              name: 'Child - 9',
+            },
+          ],
+        },
+        {
+          id: '4',
+          name: 'Child - 8',
+        },
+        {
+          id: '4',
+          name: 'Child - 9',
+        },
+      ],
     },
     {
       id: '3',
-      name: 'Child - 3',
+      name: 'OR Child - 3',
       children: [
         {
           id: '4',
           name: 'Child - 4',
+        },
+        {
+          id: '4',
+          name: 'Child - 5',
+        },
+        {
+          id: '4',
+          name: 'Child - 6',
         },
       ],
     },
