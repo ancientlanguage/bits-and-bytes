@@ -1,128 +1,73 @@
-import { makeStyles } from '@material-ui/core/styles';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import TreeItem from '@material-ui/lab/TreeItem';
-import TreeView from '@material-ui/lab/TreeView';
+import { Box, Typography } from '@material-ui/core';
+import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import ListIcon from '@material-ui/icons/List';
+import PieChartIcon from '@material-ui/icons/PieChart';
+import StopIcon from '@material-ui/icons/Stop';
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import React from 'react';
+import { StructureTag } from 'State/Structure';
 
-interface RenderTree {
-  id: string;
-  name: string;
-  children?: RenderTree[];
-}
+const ToggleButtons = (props: { structureTag: StructureTag; setStructureTag: (structureTag: StructureTag) => void; }) => {
+  const { structureTag, setStructureTag } = props;
 
-const data: RenderTree = {
-  id: 'root',
-  name: 'Cases',
-  children: [
-    {
-      id: '1',
-      name: 'Word',
-      children: [
-        {
-          id: '4',
-          name: 'Array [1-30] Letter',
-          children: [
-            {
-              id: '10',
-              name: 'Letter',
-              children: [
-                {
-                  id: '11',
-                  name: 'AND',
-                  children: [
-                    {
-                      id: 'Greek Letter',
-                      name: 'Greek Letter'
-                    },
-                    {
-                      id: 'Diacritics',
-                      name: 'Diacritics, OR:',
-                      children: [
-                        {
-                          id: 'No diacritic',
-                          name: 'No diacritic',
-                        },
-                        {
-                          id: 'Smooth breathing',
-                          name: 'Smooth breathing',
-                        },
-                        {
-                          id: 'Rough breathing',
-                          name: 'Rough breathing',
-                        }
-                      ]
-                    },
-                  ]
-                }
-              ]
-            },
-            {
-              id: '4',
-              name: 'Child - 8',
-            },
-            {
-              id: '4',
-              name: 'Child - 9',
-            },
-          ],
-        },
-        {
-          id: '4',
-          name: 'Child - 8',
-        },
-        {
-          id: '4',
-          name: 'Child - 9',
-        },
-      ],
-    },
-    {
-      id: '3',
-      name: 'OR Child - 3',
-      children: [
-        {
-          id: '4',
-          name: 'Child - 4',
-        },
-        {
-          id: '4',
-          name: 'Child - 5',
-        },
-        {
-          id: '4',
-          name: 'Child - 6',
-        },
-      ],
-    },
-  ],
-};
+  const handleStructureTag = (event: React.MouseEvent<HTMLElement>, newStructureTag: string | null) => {
+    if (newStructureTag !== null) {
+      setStructureTag(newStructureTag as StructureTag);
+    }
+  };
 
-const useStyles = makeStyles({
-  root: {
-    height: 110,
-    flexGrow: 1,
-    maxWidth: 400,
-  },
-});
-
-const StructureView = () => {
-  const classes = useStyles();
-
-  const renderTree = (nodes: RenderTree) => (
-    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-      {Array.isArray(nodes.children) ? nodes.children.map((node) => renderTree(node)) : null}
-    </TreeItem>
-  );
+  let structureTagText: string;
+  switch (structureTag) {
+    case 'atom':
+      structureTagText = 'Atom';
+      break;
+    case 'or':
+      structureTagText = 'Or';
+      break;
+    case 'and':
+      structureTagText = 'And';
+      break;
+    case 'array':
+      structureTagText = 'Array';
+      break;
+  }
 
   return (
-    <TreeView
-      className={classes.root}
-      defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpanded={['root']}
-      defaultExpandIcon={<ChevronRightIcon />}
-    >
-      {renderTree(data)}
-    </TreeView>
+    <Box display="flex">
+      <ToggleButtonGroup
+        value={structureTag}
+        exclusive
+        onChange={handleStructureTag}
+        aria-label="Structure Type"
+      >
+        <ToggleButton value="atom" aria-label="Atom">
+          <StopIcon />
+        </ToggleButton>
+        <ToggleButton value="or" aria-label="Ar">
+          <PieChartIcon />
+        </ToggleButton>
+        <ToggleButton value="and" aria-label="And">
+          <GroupWorkIcon />
+        </ToggleButton>
+        <ToggleButton value="array" aria-label="Array">
+          <ListIcon />
+        </ToggleButton>
+      </ToggleButtonGroup>
+      <Box margin={2}>
+        <Typography>
+          {structureTagText}
+        </Typography>
+      </Box>
+    </Box>
+  );
+}
+
+const StructureView = () => {
+  const [structureTag, setStructureTag] = React.useState<StructureTag>('atom');
+
+  return (
+    <ToggleButtons structureTag={structureTag} setStructureTag={setStructureTag} />
   );
 }
 

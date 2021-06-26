@@ -6,9 +6,14 @@ export type Structure = {
 } | {
   tag: 'and';
   structures: string[];
+} | {
+  tag: 'array';
+  minLength: number;
+  maxLength: number;
+  item: string;
 };
 
-export type StructureTag = 'atom' | 'or' | 'and';
+export type StructureTag = 'atom' | 'or' | 'and' | 'array';
 
 export type StructureState = {
 
@@ -24,4 +29,4 @@ export type StructureContainerAction = {
   structure: Structure;
 };
 
-export const defaultAtomId: string = '6947055f-606a-45e8-8abf-323a9c1d25d0';
+export const trivialAtomId: string = '6947055f-606a-45e8-8abf-323a9c1d25d0';
