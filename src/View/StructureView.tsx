@@ -6,7 +6,10 @@ const StructureView = () => {
   const [structureTag, setStructureTag] = React.useState<StructureTag>('atom');
 
   return (
-    <StructureTagView structureTag={structureTag} setStructureTag={setStructureTag} />
+    <StructureTagView
+      structureTag={structureTag}
+      setStructureTag={setStructureTag}
+    />
   );
 }
 
