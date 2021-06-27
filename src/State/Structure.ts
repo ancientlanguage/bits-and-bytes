@@ -1,4 +1,4 @@
-export type Structure = {
+export type StructurePart = {
   tag: 'atom';
 } | {
   tag: 'or';
@@ -16,17 +16,17 @@ export type Structure = {
 export type StructureTag = 'atom' | 'or' | 'and' | 'array';
 
 export type StructureState = {
-
+  id: string;
+  part: StructurePart;
 };
 
 export type StructureContainerState = {
-  uuidMap: Map<string, Structure>;
+  uuidMap: Map<string, StructureState>;
 };
 
 export type StructureContainerAction = {
   tag: 'add';
-  uuid: string;
-  structure: Structure;
+  structurePart: StructurePart;
 };
 
 export const trivialAtomId: string = '6947055f-606a-45e8-8abf-323a9c1d25d0';

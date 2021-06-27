@@ -1,4 +1,4 @@
-import { Box, Typography } from '@material-ui/core';
+import { Box, Grid, Typography } from '@material-ui/core';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import ListIcon from '@material-ui/icons/List';
 import PieChartIcon from '@material-ui/icons/PieChart';
@@ -34,32 +34,40 @@ const ToggleButtons = (props: { structureTag: StructureTag; setStructureTag: (st
   }
 
   return (
-    <Box display="flex">
-      <ToggleButtonGroup
-        value={structureTag}
-        exclusive
-        onChange={handleStructureTag}
-        aria-label="Structure Type"
-      >
-        <ToggleButton value="atom" aria-label="Atom">
-          <StopIcon />
-        </ToggleButton>
-        <ToggleButton value="or" aria-label="Ar">
-          <PieChartIcon />
-        </ToggleButton>
-        <ToggleButton value="and" aria-label="And">
-          <GroupWorkIcon />
-        </ToggleButton>
-        <ToggleButton value="array" aria-label="Array">
-          <ListIcon />
-        </ToggleButton>
-      </ToggleButtonGroup>
-      <Box margin={2}>
-        <Typography>
-          {structureTagText}
-        </Typography>
-      </Box>
-    </Box>
+    <Grid
+      container
+      justify="flex-start"
+      alignItems="center"
+    >
+      <Grid item>
+        <ToggleButtonGroup
+          value={structureTag}
+          exclusive
+          onChange={handleStructureTag}
+          aria-label="Structure Type"
+        >
+          <ToggleButton value="atom" aria-label="Atom">
+            <StopIcon />
+          </ToggleButton>
+          <ToggleButton value="or" aria-label="Ar">
+            <PieChartIcon />
+          </ToggleButton>
+          <ToggleButton value="and" aria-label="And">
+            <GroupWorkIcon />
+          </ToggleButton>
+          <ToggleButton value="array" aria-label="Array">
+            <ListIcon />
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Grid>
+      <Grid item>
+        <Box padding={1}>
+          <Typography variant="h5">
+            {structureTagText}
+          </Typography>
+        </Box>
+      </Grid>
+    </Grid>
   );
 }
 
