@@ -7,13 +7,13 @@ export type StructurePart = {
   tag: 'and';
   structures: string[];
 } | {
-  tag: 'array';
+  tag: 'list';
   minLength: number;
   maxLength: number;
   item: string;
 };
 
-export type StructureTag = 'atom' | 'or' | 'and' | 'array';
+export type StructureTag = 'atom' | 'or' | 'and' | 'list';
 
 export type StructureState = {
   id: string;

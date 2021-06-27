@@ -1,4 +1,4 @@
-import { Box, Grid, TextField, Typography } from '@material-ui/core';
+import { Grid, TextField, Tooltip } from '@material-ui/core';
 import CategoryIcon from '@material-ui/icons/Category';
 import ListIcon from '@material-ui/icons/List';
 import PieChartIcon from '@material-ui/icons/PieChart';
@@ -23,28 +23,13 @@ const StructureTagView = (props: { structureTag: StructureTag; setStructureTag: 
     }
   };
 
-  let structureTagText: string;
-  switch (structureTag) {
-    case 'atom':
-      structureTagText = 'Atom';
-      break;
-    case 'or':
-      structureTagText = 'Or';
-      break;
-    case 'and':
-      structureTagText = 'And';
-      break;
-    case 'array':
-      structureTagText = 'Array';
-      break;
-  }
-
   return (
     <Grid
       container
       direction="row"
       justify="flex-start"
       alignItems="center"
+      spacing={1}
     >
       <Grid item>
         <ToggleButtonGroup
@@ -54,25 +39,26 @@ const StructureTagView = (props: { structureTag: StructureTag; setStructureTag: 
           aria-label="Structure Type"
         >
           <ToggleButton value="atom" aria-label="Atom">
-            <StopIcon />
+            <Tooltip title="Atom">
+              <StopIcon />
+            </Tooltip>
           </ToggleButton>
-          <ToggleButton value="or" aria-label="Ar">
-            <PieChartIcon />
+          <ToggleButton value="or" aria-label="Or">
+            <Tooltip title="Or">
+              <PieChartIcon />
+            </Tooltip>
           </ToggleButton>
           <ToggleButton value="and" aria-label="And">
-            <CategoryIcon />
+            <Tooltip title="And">
+              <CategoryIcon />
+            </Tooltip>
           </ToggleButton>
-          <ToggleButton value="array" aria-label="Array">
-            <ListIcon />
+          <ToggleButton value="list" aria-label="List">
+            <Tooltip title="List">
+              <ListIcon />
+            </Tooltip>
           </ToggleButton>
         </ToggleButtonGroup>
-      </Grid>
-      <Grid item>
-        <Box padding={1}>
-          <Typography variant="h5">
-            {structureTagText}
-          </Typography>
-        </Box>
       </Grid>
       <Grid item>
         <Metadata structureTag={structureTag} />
