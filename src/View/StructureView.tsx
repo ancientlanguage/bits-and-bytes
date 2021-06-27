@@ -9,7 +9,7 @@ const StructureView = () => {
   const [structureTag3, setStructureTag3] = React.useState<StructureTag>('atom');
 
   return (
-    <Grid container direction="column" spacing={1}>
+    <Grid container direction="column">
       <Grid item>
         <StructureTagView
           structureTag={structureTag}
