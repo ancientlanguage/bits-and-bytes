@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import React from 'react';
 import { StructureTag } from 'State/Structure';
 import StructureTagView from './StructureTagView';
@@ -9,26 +9,20 @@ const StructureView = () => {
   const [structureTag3, setStructureTag3] = React.useState<StructureTag>('atom');
 
   return (
-    <Grid container direction="column">
-      <Grid item>
-        <StructureTagView
-          structureTag={structureTag}
-          setStructureTag={setStructureTag}
-        />
-      </Grid>
-      <Grid item>
-        <StructureTagView
-          structureTag={structureTag2}
-          setStructureTag={setStructureTag2}
-        />
-      </Grid>
-      <Grid item>
-        <StructureTagView
-          structureTag={structureTag3}
-          setStructureTag={setStructureTag3}
-        />
-      </Grid>
-    </Grid>
+    <Box display="flex" flexDirection="column">
+      <StructureTagView
+        structureTag={structureTag}
+        setStructureTag={setStructureTag}
+      />
+      <StructureTagView
+        structureTag={structureTag2}
+        setStructureTag={setStructureTag2}
+      />
+      <StructureTagView
+        structureTag={structureTag3}
+        setStructureTag={setStructureTag3}
+      />
+    </Box>
   );
 }
 

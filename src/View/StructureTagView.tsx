@@ -1,6 +1,7 @@
-import { Button, Grid, Menu, MenuItem, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Grid, IconButton, Menu, MenuItem, TextField, Typography } from '@material-ui/core';
 import CategoryIcon from '@material-ui/icons/Category';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import InfoIcon from '@material-ui/icons/Info';
 import ListIcon from '@material-ui/icons/List';
 import PieChartIcon from '@material-ui/icons/PieChart';
 import StopIcon from '@material-ui/icons/Stop';
@@ -10,7 +11,7 @@ import * as UUID from 'uuid';
 
 const Metadata = (props: { structureTag: StructureTag; }) => {
   return (
-    <TextField />
+    <TextField error />
   );
 }
 
@@ -34,7 +35,8 @@ const getTagIcon = (tag: StructureTag) => {
 
 const makeTagDescription = (tag: StructureTag) => {
   return (<>
-    {getTagIcon(tag)} < Typography > {getTagText(tag)}</Typography >
+    {getTagIcon(tag)}
+    <Box marginLeft={1}><Typography>{getTagText(tag)}</Typography></Box>
   </>);
 };
 
@@ -87,6 +89,11 @@ const StructureTagView = (props: { structureTag: StructureTag; setStructureTag: 
       </Grid>
       <Grid item>
         <Metadata structureTag={structureTag} />
+      </Grid>
+      <Grid item>
+        <IconButton>
+          <InfoIcon />
+        </IconButton>
       </Grid>
     </Grid>
   );
