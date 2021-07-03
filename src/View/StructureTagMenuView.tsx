@@ -1,19 +1,12 @@
-import { Box, Button, Grid, IconButton, Menu, MenuItem, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Menu, MenuItem, Typography } from '@material-ui/core';
 import CategoryIcon from '@material-ui/icons/Category';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import InfoIcon from '@material-ui/icons/Info';
 import ListIcon from '@material-ui/icons/List';
 import PieChartIcon from '@material-ui/icons/PieChart';
 import StopIcon from '@material-ui/icons/Stop';
 import React, { useState } from 'react';
 import { StructureTag } from 'State/Structure';
 import * as UUID from 'uuid';
-
-const Metadata = (props: { structureTag: StructureTag; }) => {
-  return (
-    <TextField error />
-  );
-}
 
 const getTagText = (tag: StructureTag) => {
   switch (tag) {
@@ -40,7 +33,7 @@ const makeTagDescription = (tag: StructureTag) => {
   </>);
 };
 
-const StructureTagView = (props: { structureTag: StructureTag; setStructureTag: (structureTag: StructureTag) => void; }) => {
+const StructureTagMenuView = (props: { structureTag: StructureTag; setStructureTag: (structureTag: StructureTag) => void; }) => {
   const { structureTag, setStructureTag } = props;
   const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(null);
   const [menuId] = useState<string>(() => UUID.v4());
@@ -66,37 +59,21 @@ const StructureTagView = (props: { structureTag: StructureTag; setStructureTag: 
   };
 
   return (
-    <Grid
-      container
-      direction="row"
-      justify="flex-start"
-      alignItems="center"
-      spacing={1}
-    >
-      <Grid item>
-        <Button color="inherit" aria-controls={menuId} aria-haspopup="true" onClick={handleClick} variant="outlined">
-          {makeTagDescription(structureTag)} <ExpandMoreIcon />
-        </Button>
-        <Menu
-          id={menuId}
-          anchorEl={anchorElement}
-          keepMounted
-          open={Boolean(anchorElement)}
-          onClose={handleClose}
-        >
-          {menuItems.map((i) => makeMenuItem(i))}
-        </Menu>
-      </Grid>
-      <Grid item>
-        <Metadata structureTag={structureTag} />
-      </Grid>
-      <Grid item>
-        <IconButton>
-          <InfoIcon />
-        </IconButton>
-      </Grid>
-    </Grid>
+    <Box>
+      <Button color="inherit" aria-controls={menuId} aria-haspopup="true" onClick={handleClick} variant="outlined">
+        {makeTagDescription(structureTag)} <ExpandMoreIcon />
+      </Button>
+      <Menu
+        id={menuId}
+        anchorEl={anchorElement}
+        keepMounted
+        open={Boolean(anchorElement)}
+        onClose={handleClose}
+      >
+        {menuItems.map((i) => makeMenuItem(i))}
+      </Menu>
+    </Box>
   );
 }
 
-export default StructureTagView;
+export default StructureTagMenuView;
