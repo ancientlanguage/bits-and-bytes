@@ -1,19 +1,19 @@
 export type StructurePart = {
-  tag: 'atom';
+  tag: 'size';
+  size: number;
 } | {
   tag: 'or';
-  structures: string[];
+  parts: StructurePart;
 } | {
   tag: 'and';
-  structures: string[];
+  parts: StructurePart;
 } | {
   tag: 'list';
-  minLength: number;
-  maxLength: number;
-  item: string;
+  count: number;
+  item: StructurePart;
 };
 
-export type StructureTag = 'atom' | 'or' | 'and' | 'list';
+export type StructureTag = 'size' | 'or' | 'and' | 'list';
 
 export type StructureState = {
   id: string;
