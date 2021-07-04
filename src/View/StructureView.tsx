@@ -57,7 +57,6 @@ const SizeTextField = (props: { readOnly: boolean; size: number; setSize: (size:
 
 const StructurePartView = (props: { depth: number; structurePart: StructurePart; setStructurePart: (structurePart: StructurePart) => void; }) => {
   const { structurePart, setStructurePart } = props;
-  const depth = props.depth + 1;
   const structureTag = structurePart.tag;
   let readOnly: boolean;
   let size: number;
