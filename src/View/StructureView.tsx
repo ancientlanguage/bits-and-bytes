@@ -69,10 +69,18 @@ const StructurePartView = (props: { depth: number; structurePart: StructurePart;
       setSize = (size: number) => setStructurePart({ ...structurePart, size });
       break;
     case 'or':
+      readOnly = true;
+      size = 42;
+      setSize = (_) => { };
+      break;
     case 'and':
+      readOnly = true;
+      size = 43;
+      setSize = (_) => { };
+      break;
     case 'list':
       readOnly = true;
-      size = 99;
+      size = 44;
       setSize = (_) => { };
       break;
   }
