@@ -15,7 +15,6 @@ const SizeTextField = (props: { readOnly: boolean; size: number; setSize: (size:
   const { readOnly, size, setSize } = props;
   const [sizeInput, setSizeInput] = useState<string>(() => size.toString());
   const [hasError, setHasError] = useState<boolean>(false);
-  const [helperText, setHelperText] = useState<string | undefined>(undefined);
 
   const handleSizeInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newInput = event.target.value;
@@ -25,20 +24,31 @@ const SizeTextField = (props: { readOnly: boolean; size: number; setSize: (size:
     if (parsedNumber) {
       setSize(parsedNumber);
       setHasError(false);
-      setHelperText(undefined);
     } else {
       setHasError(true);
-      setHelperText("Positive integer");
     }
   };
+
+  let shownText: string;
+  let shownError: boolean;
+  let helperText: string | undefined;
+  if (readOnly) {
+    shownText = size.toString();
+    shownError = false;
+    helperText = undefined;
+  } else {
+    shownText = sizeInput;
+    shownError = hasError;
+    helperText = hasError ? "Positive integer" : undefined;
+  }
 
   return (
     <TextField
       variant="outlined"
       label="Size"
-      value={sizeInput}
+      value={shownText}
       onChange={handleSizeInputChange}
-      error={hasError}
+      error={shownError}
       helperText={helperText}
       InputProps={{ readOnly }}
     />
