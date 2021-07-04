@@ -3,10 +3,10 @@ export type StructurePart = {
   size: number;
 } | {
   tag: 'or';
-  parts: StructurePart;
+  parts: StructurePart[];
 } | {
   tag: 'and';
-  parts: StructurePart;
+  parts: StructurePart[];
 } | {
   tag: 'list';
   count: number;

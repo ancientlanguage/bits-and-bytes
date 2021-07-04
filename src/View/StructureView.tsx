@@ -1,7 +1,6 @@
-import { Box, Grid, IconButton, TextField } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+import { Box, Grid, TextField } from '@material-ui/core';
 import { useState } from 'react';
-import { StructureTag } from 'State/Structure';
+import { StructurePart, StructureTag } from 'State/Structure';
 import StructureTagToggleView from './StructureTagToggleView';
 
 const parseNaturalNumber = (text: string): number | undefined => {
@@ -12,10 +11,11 @@ const parseNaturalNumber = (text: string): number | undefined => {
   }
 }
 
-const SizeTextField = (props: { size: number; setSize: (size: number) => void; }) => {
-  const { size, setSize } = props;
+const SizeTextField = (props: { readOnly: boolean; size: number; setSize: (size: number) => void; }) => {
+  const { readOnly, size, setSize } = props;
   const [sizeInput, setSizeInput] = useState<string>(() => size.toString());
   const [hasError, setHasError] = useState<boolean>(false);
+  const [helperText, setHelperText] = useState<string | undefined>(undefined);
 
   const handleSizeInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newInput = event.target.value;
@@ -25,8 +25,10 @@ const SizeTextField = (props: { size: number; setSize: (size: number) => void; }
     if (parsedNumber) {
       setSize(parsedNumber);
       setHasError(false);
+      setHelperText(undefined);
     } else {
       setHasError(true);
+      setHelperText("Positive integer");
     }
   };
 
@@ -37,14 +39,50 @@ const SizeTextField = (props: { size: number; setSize: (size: number) => void; }
       value={sizeInput}
       onChange={handleSizeInputChange}
       error={hasError}
-      helperText={`Positive integer: ${size.toString()}`}
+      helperText={helperText}
+      InputProps={{ readOnly }}
     />
   );
 }
 
-const StructureView = () => {
-  const [structureTag, setStructureTag] = useState<StructureTag>('or');
-  const [sizeValue, setSizeValue] = useState<number>(8);
+const StructurePartView = (props: { depth: number; structurePart: StructurePart; setStructurePart: (structurePart: StructurePart) => void; }) => {
+  const { structurePart, setStructurePart } = props;
+  const depth = props.depth + 1;
+  const structureTag = structurePart.tag;
+  let readOnly: boolean;
+  let size: number;
+  let setSize: (size: number) => void;
+  switch (structurePart.tag) {
+    case 'size':
+      readOnly = false;
+      size = structurePart.size;
+      setSize = (size: number) => setStructurePart({ ...structurePart, size });
+      break;
+    case 'or':
+    case 'and':
+    case 'list':
+      readOnly = true;
+      size = 99;
+      setSize = (_) => { };
+      break;
+  }
+
+  const setStructureTag = (structureTag: StructureTag) => {
+    switch (structureTag) {
+      case 'size':
+        setStructurePart({ tag: 'size', size });
+        break;
+      case 'or':
+        setStructurePart({ tag: 'or', parts: [] });
+        break;
+      case 'and':
+        setStructurePart({ tag: 'and', parts: [] });
+        break;
+      case 'list':
+        setStructurePart({ tag: 'list', count: 8, item: { tag: 'size', size: 2 } });
+        break;
+    }
+  }
 
   return (
     <Box margin={1}>
@@ -56,10 +94,17 @@ const StructureView = () => {
           />
         </Grid>
         <Grid item>
-          <SizeTextField size={sizeValue} setSize={setSizeValue} />
+          <SizeTextField readOnly={readOnly} size={size} setSize={setSize} />
         </Grid>
       </Grid>
     </Box>
+  );
+}
+
+const StructureView = () => {
+  const [structurePart, setStructurePart] = useState<StructurePart>(() => ({ tag: 'size', size: 8 }));
+  return (
+    <StructurePartView depth={0} structurePart={structurePart} setStructurePart={setStructurePart} />
   );
 }
 
